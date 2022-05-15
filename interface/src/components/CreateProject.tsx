@@ -3,11 +3,20 @@ import Typography from '@mui/material/Typography';
 import Box from "@mui/material/Box"
 import { Button, Divider, TextField } from '@mui/material';
 import {useState} from "react";
+import { styled } from '@mui/material/styles';
+import { create } from 'ipfs-http-client'
+import "../styles/CreateProjectStyle.css"
 
 import { useWeb3React } from '@web3-react/core'
 import CrowdFundingContract from "../contracts/crowdfungindContract.js";
 let CrowdFundingAddress = "0xDAB457Efd688904Eac98c2cA493458bDc7495909";
 
+
+const client = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https'
+})
 
 export default function CreateProject() {
 
@@ -23,6 +32,22 @@ export default function CreateProject() {
     const [tokenName,setTokenName] = useState<any>("")
     const [tokenSymbol,setTokenSymbol] = useState<any>("")
     const [tokenSupply,setTokenSupply] = useState<any>("")
+    const [photo,setPhoto] = useState<any>("");
+    const [photoDisplay,setPhotoDisplay] = useState<any>(null);
+
+    const handlePhoto = (event:any)=>{
+        // event.preventDefault();
+        console.log(event.target.files[0])
+        console.log(URL.createObjectURL(event.target.files[0]))
+        setPhoto(event.target.files[0])
+        setPhotoDisplay(URL.createObjectURL(event.target.files[0]))
+        
+    }
+
+
+    const Input = styled('input')({
+        display: 'none',
+      });
 
 
     async function createNewProject(){
@@ -30,7 +55,12 @@ export default function CreateProject() {
         const crowdFundingContract = CrowdFundingContract(signer,CrowdFundingAddress)
 
         try{
-            const tx = await crowdFundingContract.createProject(title,description,duration,goal,nftName,nftSymbol,nftBaseURI,tokenName,tokenSymbol,tokenSupply)
+
+            const addedImage = await client.add(photo);
+            const url = `https://ipfs.infura.io/ipfs/${addedImage.path}`
+           
+            console.log(url);
+            const tx = await crowdFundingContract.createProject(title,description,duration,goal,nftName,nftSymbol,url,tokenName,tokenSymbol,tokenSupply)
 
             tx.wait().then((res:any)=>{
                 console.log("tranzactie cu success")
@@ -156,44 +186,75 @@ export default function CreateProject() {
                 />
                 </Box>
 
-                <Box sx={{marginTop:'55px'}}>
-                    <Typography  sx={{fontSize:"30px"}}>
-                        Project Token Name: 
-                    </Typography>
-                    <TextField sx={{width:"300px"}} 
-                    id="outlined-basic" 
-                    label="Token Name" 
-                    variant="outlined"
-                    value = {tokenName}
-                    onChange = {e=>setTokenName(e.target.value)}
-                    />
-                </Box>
+            <Box className='BoxRightLow' sx={{display:"flex",alignItems:"center"}}>
+                <Box className="BoxRightLowR">
 
-                <Box sx={{marginTop:'20px'}}>
-                    <Typography  sx={{fontSize:"30px"}}>
-                        Project Token Symbol: 
-                    </Typography>
-                    <TextField sx={{width:"300px"}} 
-                    id="outlined-basic" 
-                    label="Token Symbol" 
-                    variant="outlined"
-                    value = {tokenSymbol}
-                    onChange = {e=>setTokenSymbol(e.target.value)}
-                    />
-                </Box>
+                    <Box sx={{marginTop:'55px'}}>
+                            <Typography  sx={{fontSize:"30px"}}>
+                                Project Token Name: 
+                            </Typography>
+                            <TextField sx={{width:"300px"}} 
+                            id="outlined-basic" 
+                            label="Token Name" 
+                            variant="outlined"
+                            value = {tokenName}
+                            onChange = {e=>setTokenName(e.target.value)}
+                            />
+                        </Box>
 
-                <Box sx={{marginTop:'20px'}}>
-                    <Typography  sx={{fontSize:"30px"}}>
-                        Project Token Supply: 
-                    </Typography>
-                    <TextField sx={{width:"300px"}} 
-                    id="outlined-basic" 
-                    label="Token Supply" 
-                    variant="outlined"
-                    value={tokenSupply}
-                    onChange = {e=> setTokenSupply(e.target.value)}
-                    />
+                        <Box sx={{marginTop:'20px'}}>
+                            <Typography  sx={{fontSize:"30px"}}>
+                                Project Token Symbol: 
+                            </Typography>
+                            <TextField sx={{width:"300px"}} 
+                            id="outlined-basic" 
+                            label="Token Symbol" 
+                            variant="outlined"
+                            value = {tokenSymbol}
+                            onChange = {e=>setTokenSymbol(e.target.value)}
+                            />
+                        </Box>
+
+                        <Box sx={{marginTop:'20px'}}>
+                            <Typography  sx={{fontSize:"30px"}}>
+                                Project Token Supply: 
+                            </Typography>
+                            <TextField sx={{width:"300px"}} 
+                            id="outlined-basic" 
+                            label="Token Supply" 
+                            variant="outlined"
+                            value={tokenSupply}
+                            onChange = {e=> setTokenSupply(e.target.value)}
+                            />
+                        </Box>
+
                 </Box>
+                <Box className="BoxRightLowL" sx={{marginLeft:"200px"}}>
+                    <Box sx={{marginTop:'20px'}}>
+                            <Typography  sx={{fontSize:"30px"}}>
+                                Upload Project Photo (NFT Photo): 
+                            </Typography>
+                            <label htmlFor="contained-button-file">
+                                <Input accept="image/*" id="contained-button-file" multiple type="file" onChange={handlePhoto} />
+                                <Button variant="contained"  size="large" component="span" >
+                                Upload
+                                </Button>
+                            </label>
+                            <Box>
+                            {
+                            photoDisplay && (
+                            <img src={photoDisplay} className="imgDisp"  />
+                            )
+                            }
+                            </Box>
+                           
+                    </Box>
+                </Box>
+               
+
+            </Box>
+
+
 
             </Box>
 

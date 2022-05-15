@@ -58,9 +58,15 @@ export default function PermanentDrawer() {
       setSelectedIndex(index);
     }
 
-    function handleChangeForInvest(text:any,index:any,projAddress:any){
+    function handleChangeForInvest(index:any,projAddress:any){
       setSelectedIndex(index);
       setProjectAddress(projAddress)
+      console.log(".............................")
+      console.log("handleInvest")
+      console.log(index)
+      console.log(projAddress)
+      console.log(".............................")
+
     }
 
   return (
@@ -121,7 +127,7 @@ export default function PermanentDrawer() {
       >
         <Toolbar />
 
-          {selectedIndex ===0 ? <AllProjects goToInvest={handleChange}/>:null}
+          {selectedIndex ===0 ? <AllProjects goToInvest={handleChangeForInvest}/>:null}
           {selectedIndex ===1 ? <MyProjects/>:null}
           {selectedIndex ===2 ? <CreateProject/>:null}
           {selectedIndex ===3 ? <InvestInProject  projectAddress={projectAddress}/>:null}

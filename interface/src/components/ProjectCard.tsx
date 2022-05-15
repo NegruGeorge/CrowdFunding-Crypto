@@ -10,7 +10,7 @@ import {useEffect,useState} from "react";
 import { CardHeader } from '@mui/material';
 
 
-export default function ProjectCard({item}:any) {
+export default function ProjectCard({item,goToInvest}:any) {
     console.log("ss")
     console.log(item.title)
   return (
@@ -18,8 +18,8 @@ export default function ProjectCard({item}:any) {
               <CardHeader title={item.title} subheader='NFTName' />
               <CardMedia
                   component="img"
-                  height="140"
-                  image = "https://s2.coinmarketcap.com/static/img/coins/64x64/8567.png"
+                  height="100"
+                  image = {item.nftURI}
                   alt="green "
               />
               <CardContent>
@@ -31,7 +31,7 @@ export default function ProjectCard({item}:any) {
                   </Typography>
               </CardContent>
               <CardActions>
-                  <Button size="small">Share</Button>
+                  <Button size="small" onClick={()=>goToInvest(3,item.contractAddress)}>Invest</Button>
                   <Button size="small">Learn More</Button>
               </CardActions>
            </Card>

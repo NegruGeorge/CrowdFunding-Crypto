@@ -20,7 +20,7 @@ import ProjectCard from "./ProjectCard"
 
 
 let CrowdFundingAddress = "0xDAB457Efd688904Eac98c2cA493458bDc7495909";
-export default function AllProjects(goToInves:any) {
+export default function AllProjects({goToInvest}:any) {
     let [projectsData,setProjectsData]  = useState<any>([]);
 
     const {chainId,account,active,library:provider} = useWeb3React();
@@ -90,7 +90,8 @@ export default function AllProjects(goToInves:any) {
              nftURI: projectNftURI,
              tokeName: projectTokenName,
              tokenSymbol: projectTokenSymbol,
-             tokenSupply: projectTokenSupply
+             tokenSupply: projectTokenSupply,
+             contractAddress:projects[i]
            }
            aux.push(component)
           console.log(aux)
@@ -119,6 +120,7 @@ export default function AllProjects(goToInves:any) {
   return (
     <>
     <div>AllProjects</div>
+    {/* <Button onClick={()=>goToInvest(3,"ss")}>Go Invest</Button> */}
     <Typography paragraph>
             chainId: {chainId} <br/>
             address: {account} <br/>
@@ -155,7 +157,7 @@ export default function AllProjects(goToInves:any) {
           {projectsData.length}
             
       {projectsData.map((i:any)=>(
-          <ProjectCard key={i.title} item = {i}  />
+          <ProjectCard key={i.title} item = {i} goToInvest={goToInvest} />
       ))}
 
     </>
