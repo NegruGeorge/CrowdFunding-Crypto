@@ -78,9 +78,12 @@ export default function CreateProject() {
 
   return (
       <>
-<Typography sx={{fontSize:"20px", fontWeight:"bold"}}>
+
+
+        <Typography sx={{fontSize:"40px",fontWeight:"bold",marginBottom:"20px"}}> 
             Create A new CrowdfundingProject:
         </Typography>
+
 
     <Box sx={{}}>
 
@@ -154,7 +157,7 @@ export default function CreateProject() {
                     />
                 </Box>
 
-                <Box sx={{marginTop:'20px'}}>
+                {/* <Box sx={{marginTop:'20px'}}>
                     <Typography  sx={{fontSize:"30px"}}>
                         Project baseURI(photoLink): 
                     </Typography>
@@ -165,7 +168,7 @@ export default function CreateProject() {
                     value = {nftBaseURI}
                     onChange = {e=>setNftBaseURI(e.target.value)}
                     />
-                </Box>
+                </Box> */}
 
             </Box>
 
@@ -263,7 +266,7 @@ export default function CreateProject() {
             <Button  
             size="large" 
             variant="contained"
-            disabled = {title == "" || description == "" || goal == "" || duration == "" || nftName =="" || nftSymbol =="" || nftBaseURI == "" || tokenName =="" || tokenSymbol == "" || tokenSupply==""}
+            disabled = {title == "" || description == "" || goal == "" || duration == "" || nftName =="" || nftSymbol ==""  || tokenName =="" || tokenSymbol == "" || tokenSupply==""}
             onClick={()=> createNewProject()}
            >
                 Create Project

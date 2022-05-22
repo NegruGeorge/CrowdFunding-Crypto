@@ -9,6 +9,11 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import {useEffect,useState} from "react";
 import { CardHeader } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import {ethers} from "ethers"
+
 
 
 import CrowdFundingContract from "../contracts/crowdfungindContract.js";
@@ -26,7 +31,7 @@ export default function AllProjects({goToInvest}:any) {
     const {chainId,account,active,library:provider} = useWeb3React();
 
     useEffect(()=>{
-        console.log("in Use")
+        // console.log("in Use")
         if(active){
           getProjects();
         }
@@ -34,33 +39,33 @@ export default function AllProjects({goToInvest}:any) {
   
 
       async function getProjects() {
-        console.log(active)
+        // console.log(active)
         if(active){
           const signer = provider.getSigner();
-          console.log(".......")
-          console.log(signer)
+          // console.log(".......")
+          // console.log(signer)
   
           let contractCrowdFunding = CrowdFundingContract(provider.getSigner(),CrowdFundingAddress);
-          console.log(contractCrowdFunding)
+          // console.log(contractCrowdFunding)
         
   
         let projects = await contractCrowdFunding.getAllProjects();
-        console.log(projects);
+        // console.log(projects);
 
         // setProjectsData([]);
        let aux:any = []
-        console.log("veee")
+        // console.log("veee")
 
         for(let i =0; i<projects.length;i++){
-          console.log("x")
-          console.log(projects[i])
-          console.log("x")
+          // console.log("x")
+          // console.log(projects[i])
+          // console.log("x")
            let projectContract = ProjectContract(signer,projects[i]);
            let NftAddress = await  projectContract.getProjectNftAddress();
            let TokenAddress = await projectContract.getProjectTokenAddress();
-           console.log("....")
-           console.log(NftAddress);
-           console.log(TokenAddress)
+          //  console.log("....")
+          //  console.log(NftAddress);
+          //  console.log(TokenAddress)
 
            let nftContract =  ProjectNftContract(signer,NftAddress);
            let tokenContract =  ProjectTokenContract(signer,TokenAddress);
@@ -75,11 +80,15 @@ export default function AllProjects({goToInvest}:any) {
           let projectTokenName = await tokenContract.name();
           let projectTokenSymbol = await tokenContract.symbol();
           let projectTokenSupply = await tokenContract.totalSupply();
-          console.log("----------------------------")
-          console.log(projectTitle);
-          console.log(projectNftName);
-          console.log(projectNftSymbol);
-          console.log(projectTokenName)
+
+          let projectGoal = ethers.utils.formatEther(await projectContract.goal());
+          let projectBalance = ethers.utils.formatEther(await projectContract.getContractBalance())
+
+          // console.log("----------------------------")
+          // console.log(projectTitle);
+          // console.log(projectNftName);
+          // console.log(projectNftSymbol);
+          // console.log(projectTokenName)
           
            let component = {
              title: projectTitle,
@@ -91,10 +100,12 @@ export default function AllProjects({goToInvest}:any) {
              tokeName: projectTokenName,
              tokenSymbol: projectTokenSymbol,
              tokenSupply: projectTokenSupply,
-             contractAddress:projects[i]
+             contractAddress:projects[i],
+             balance: projectBalance,
+             goal: projectGoal
            }
            aux.push(component)
-          console.log(aux)
+          // console.log(aux)
             // console.log("xxxxxxxxxxxxxx")
             // console.log(projectsData)
             // setProjectsData(component);
@@ -106,7 +117,7 @@ export default function AllProjects({goToInvest}:any) {
 
         // })
 
-        console.log(aux)
+        // console.log(aux)
         setProjectsData(aux);
 
    
@@ -119,47 +130,53 @@ export default function AllProjects({goToInvest}:any) {
 
   return (
     <>
-    <div>AllProjects</div>
+    
+    <Typography sx={{fontSize:"40px",fontWeight:"bold"}}>All Projects</Typography>
     {/* <Button onClick={()=>goToInvest(3,"ss")}>Go Invest</Button> */}
     <Typography paragraph>
-            chainId: {chainId} <br/>
+            {/* chainId: {chainId} <br/>
             address: {account} <br/>
-            ative : {active ? 'true':'false'} <br/>
-            {/* {active ?<Button variant="contained"  color ="secondary" onClick = {getProjects}>getProjects</Button>:
-                <Button variant="contained"  color ="secondary"  >Please connect</Button>
-          } */}
-          
-        {/* <Card sx={{ maxWidth: 345,marinTop:"30px" }}>
-            <CardHeader title="Project Title" subheader='NFTName' />
-            <CardMedia
-                component="img"
-                height="140"
-                image = {require('../images/bk.jpg')}
-                alt="green "
-            />
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                Project Title
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                Project Description
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-            </CardActions>
-            </Card> */}
-
-
+            ative : {active ? 'true':'false'} <br/> */}
+            {active ?<Typography   sx={{fontSize:"10px"}} color ="secondary"  >connected</Typography>:
+                <Typography   sx={{fontSize:"100px"}} color ="secondary"  >Please connect</Typography>
+          }
         </Typography>
 
-          {projectsData.length}
-            
-      {projectsData.map((i:any)=>(
-          <ProjectCard key={i.title} item = {i} goToInvest={goToInvest} />
-      ))}
+          {/* {projectsData.length} */}
 
+    {
+
+     active ? 
+     
+          projectsData.length ===0 ? 
+            
+            <Box sx={{ display: 'flex', alignItems:"center" }}>
+              <Box sx={{margin:"auto"}}>
+                 <CircularProgress size="10rem"/>
+              </Box>
+           
+          </Box>
+
+            :
+
+            <Box sx={{ flexGrow: 1, marginLeft:"100px"}}>
+            <Grid container spacing={0}>
+                  {projectsData.map((i:any)=>(
+                    <Grid item xs={4} sx={{marginBottom:"30px"}}>
+                        <ProjectCard key={i.title} item = {i} goToInvest={goToInvest} />
+                    </Grid>
+                    
+                  ))}
+            </Grid>
+          </Box>
+        
+      :null
+
+
+    }
+
+   
+           
     </>
 
     

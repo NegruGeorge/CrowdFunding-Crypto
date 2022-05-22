@@ -10,7 +10,8 @@ import CrowdFundingContract from "../contracts/crowdfungindContract.js";
 import ProjectContract  from "../contracts/ProjectContract";
 import ProjectNftContract from "../contracts/ProjectNft";
 import ProjectTokenContract from "../contracts/ProjectToken";
-import ProjectCard from "./ProjectCard"
+import MyProjectCard from "./MyProjectCard"
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 let CrowdFundingAddress = "0xDAB457Efd688904Eac98c2cA493458bDc7495909";
@@ -22,40 +23,40 @@ export default function MyProjects() {
   const {chainId,account,active,library:provider} = useWeb3React();
 
   useEffect(()=>{
-    console.log("in Use")
+    // console.log("in Use")
     if(active){
       getProjects();
     }
   },[active])
 
   async function getProjects() {
-    console.log(active)
+   //console.log(active)
     if(active){
       const signer = provider.getSigner();
-      console.log(".......")
-      console.log(signer)
+      //console.log(".......")
+      //console.log(signer)
 
       let contractCrowdFunding = CrowdFundingContract(provider.getSigner(),CrowdFundingAddress);
-      console.log(contractCrowdFunding)
+      //console.log(contractCrowdFunding)
     
 
     let projects = await contractCrowdFunding.getProjectForUser(account);
-    console.log(projects);
+    //console.log(projects);
 
     // setProjectsData([]);
    let aux:any = []
-    console.log("veee")
+    //console.log("veee")
 
     for(let i =0; i<projects.length;i++){
-      console.log("x")
-      console.log(projects[i])
-      console.log("x")
+      // console.log("x")
+      // console.log(projects[i])
+      // console.log("x")
        let projectContract = ProjectContract(signer,projects[i]);
        let NftAddress = await  projectContract.getProjectNftAddress();
        let TokenAddress = await projectContract.getProjectTokenAddress();
-       console.log("....")
-       console.log(NftAddress);
-       console.log(TokenAddress)
+      //  console.log("....")
+      //  console.log(NftAddress);
+      //  console.log(TokenAddress)
 
        let nftContract =  ProjectNftContract(signer,NftAddress);
        let tokenContract =  ProjectTokenContract(signer,TokenAddress);
@@ -70,11 +71,15 @@ export default function MyProjects() {
       let projectTokenName = await tokenContract.name();
       let projectTokenSymbol = await tokenContract.symbol();
       let projectTokenSupply = await tokenContract.totalSupply();
-      console.log("----------------------------")
-      console.log(projectTitle);
-      console.log(projectNftName);
-      console.log(projectNftSymbol);
-      console.log(projectTokenName)
+
+      let projectBalance = await projectContract.balance();
+      let projectGoal = await projectContract.goal();
+
+      // console.log("----------------------------")
+      // console.log(projectTitle);
+      // console.log(projectNftName);
+      // console.log(projectNftSymbol);
+      // console.log(projectTokenName)
       
        let component = {
          title: projectTitle,
@@ -86,10 +91,12 @@ export default function MyProjects() {
          tokeName: projectTokenName,
          tokenSymbol: projectTokenSymbol,
          tokenSupply: projectTokenSupply,
-         contractAddress:projects[i]
+         contractAddress:projects[i],
+         balance:projectBalance,
+         goal:projectGoal
        }
        aux.push(component)
-      console.log(aux)
+      //console.log(aux)
         // console.log("xxxxxxxxxxxxxx")
         // console.log(projectsData)
         // setProjectsData(component);
@@ -101,12 +108,51 @@ export default function MyProjects() {
 
     // })
 
-    console.log(aux)
+    //console.log(aux)
     setProjectsData(aux);
 
 
     }
   }
+
+
+  async function withdrawFunds(projectAddress:any){
+    if(active){
+
+      const signer = provider.getSigner();
+
+      let projectContract = ProjectContract(signer,projectAddress);
+
+      try{
+       let tx = await  projectContract.payOut();
+       tx.wait();
+      }catch(err){
+        console.log(err)
+      }
+
+
+    }
+  }
+
+  async function checkIfProjectIsOver(projectAddress:any){
+    if(active){
+
+      const signer = provider.getSigner();
+
+      let projectContract = ProjectContract(signer,projectAddress);
+
+      try{
+       let tx = await  projectContract.checkIfCompleteOrOverDue();
+       tx.wait();
+      }catch(err){
+        console.log(err)
+      }
+
+
+    }
+  }
+
+
 
   useEffect(()=>{
 
@@ -115,14 +161,53 @@ export default function MyProjects() {
 
   return (
       <>
-    <div>My Project</div>
+      <Typography sx={{fontSize:"40px",fontWeight:"bold"}}>My Projects</Typography>
 
-    {projectsData.length}
+    {active ?<Typography   sx={{fontSize:"10px"}} color ="secondary"  >connected</Typography>:
+                <Typography   sx={{fontSize:"100px"}} color ="secondary"  >Please connect</Typography>
+    }
+    {/* {projectsData.length} */}
             
-            {projectsData.map((i:any)=>(
-                <ProjectCard key={i.title} item = {i}  />
-            ))}
+            {/* {projectsData.map((i:any)=>(
+                <MyProjectCard
+                  key={i.title}
+                  item = {i} 
+                  withdraw ={withdrawFunds} 
+                  checkIfProjectIsOver ={checkIfProjectIsOver}
+                
+                
+                />
+            ))} */}
       
+{
+      active ? 
+     
+     projectsData.length ===0 ? 
+       
+       <Box sx={{ display: 'flex', alignItems:"center" }}>
+         <Box sx={{margin:"auto"}}>
+            <CircularProgress size="10rem"/>
+         </Box>
+      
+     </Box>
+
+       :
+
+       projectsData.map((i:any)=>(
+        <MyProjectCard
+          key={i.title}
+          item = {i} 
+          withdraw ={withdrawFunds} 
+          checkIfProjectIsOver ={checkIfProjectIsOver}
+        
+        
+        />
+    ))
+   
+ :null
+
+             }
+
       </>
    
 

@@ -133,9 +133,9 @@ export default function PermanentDrawer() {
           {selectedIndex ===3 ? <InvestInProject  projectAddress={projectAddress}/>:null}
           {selectedIndex ===4 ? <About/>:null}
 
-        <Typography paragraph>
+        {/* <Typography paragraph>
             from the main Drawer
-        </Typography>
+        </Typography> */}
       </Box>
     </Box>
   );

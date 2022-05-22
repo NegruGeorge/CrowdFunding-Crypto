@@ -9,39 +9,19 @@ import CardMedia from '@mui/material/CardMedia';
 import {useEffect,useState} from "react";
 import { CardHeader } from '@mui/material';
 import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
-
-import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
-import Box from "@mui/material/Box"
+import {ethers} from "ethers"
 
 
-function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Box sx={{ width: '100%', mr: 1 }}>
-          <LinearProgress variant="determinate" {...props} />
-        </Box>
-        <Box sx={{ minWidth: 35 }}>
-          <Typography variant="body2" color="text.secondary">{`${Math.round(
-            props.value,
-          )}%`}</Typography>
-        </Box>
-      </Box>
-    );
-  }
 
-
-export default function ProjectCard({item,goToInvest}:any) {
+export default function MyProjectCard({item,goToInvest,withdraw,checkIfProjectIsOver}:any) {
     // console.log("ss")
     // console.log(item.title)
   return (
 
-<Card key = {item.title} sx={{ maxWidth: 445,marginTop:"30px",backgroundColor:"#F0F8FF" }}>
+<Card key = {item.title} sx={{ maxWidth: 1045,marginTop:"30px",backgroundColor:"#F0F8FF" }}>
               
               <CardHeader 
-            
-              avatar = {
-                  <CurrencyExchangeIcon  fontSize="large"/>
-              }
+        
               title={item.title +  " $" + item.tokenSymbol} subheader={ "Get NFT: " + item.nftName} 
               
               
@@ -59,19 +39,33 @@ export default function ProjectCard({item,goToInvest}:any) {
                   <Typography variant="body2" color="text.secondary">
                   { "Description: " +  item.description}
                   </Typography>
-                
-                <Typography sx={{marginTop:"40px"}}>Goal: {item.goal}ETH</Typography>
-                <LinearProgressWithLabel value={ (parseFloat(item.balance) * 100) / parseFloat(item.goal)}/>
+                  <Typography variant="h5" component="div">
+                    {"Goal to Raise:  " + ethers.utils.formatEther(item.goal)}
+                  </Typography>
+                  <Typography variant="h5" component="div">
+                    {"Total Raised:  " + ethers.utils.formatEther(item.balance)}
+                  </Typography>
+
+
               </CardContent>
-
-
               <CardActions >
                 <Button 
-                    sx={{marginLeft:"100px"}}
+                    sx={{marginLeft:"300px"}}
                    size="large" 
                    variant="contained"
-                   onClick={()=>goToInvest(3,item.contractAddress)}>
-                    Invest or Learn More
+                   color="secondary"
+
+                   onClick={()=>checkIfProjectIsOver(item.contractAddress)}>
+                    Check if over 
+                </Button>
+
+                <Button 
+                    sx={{marginLeft:"200px"}}
+                   size="large" 
+                   variant="contained"
+                   color="secondary"
+                   onClick={()=>withdraw(item.contractAddress)}>
+                    Withdraw money
                 </Button>
               </CardActions>
            </Card>
