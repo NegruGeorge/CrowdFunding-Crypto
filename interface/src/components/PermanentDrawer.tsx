@@ -61,11 +61,11 @@ export default function PermanentDrawer() {
     function handleChangeForInvest(index:any,projAddress:any){
       setSelectedIndex(index);
       setProjectAddress(projAddress)
-      console.log(".............................")
-      console.log("handleInvest")
-      console.log(index)
-      console.log(projAddress)
-      console.log(".............................")
+      // console.log(".............................")
+      // console.log("handleInvest")
+      // console.log(index)
+      // console.log(projAddress)
+      // console.log(".............................")
 
     }
 

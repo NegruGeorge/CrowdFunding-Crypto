@@ -21,7 +21,6 @@ const client = create({
 export default function CreateProject() {
 
     const {chainId,account,active,library:provider} = useWeb3React();
-
     const [title,setTitle] = useState<any>("");
     const [description,setDescription] = useState<any>("");
     const [goal,setGoal] = useState<any>("");

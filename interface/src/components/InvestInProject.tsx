@@ -58,10 +58,10 @@ export default function InvestInProject({projectAddress}:any) {
     },[active])
 
     async function getProject(){
-      console.log(projectAddress + " .................")
+      //(projectAddress + " .................")
       if(active && projectAddress !== ""){
         const signer = provider.getSigner();
-        console.log(".....");
+       // console.log(".....");
 
         let projectContract = ProjectContract(provider.getSigner(),projectAddress);
         // console.log(projectContract)
@@ -99,10 +99,10 @@ export default function InvestInProject({projectAddress}:any) {
 
     async function invest(){
       const signer = provider.getSigner();
-      console.log(".....");
+      //console.log(".....");
 
       let projectContract = ProjectContract(provider.getSigner(),projectAddress);
-      console.log(amountETH)
+      //console.log(amountETH)
       const options = {value: ethers.utils.parseEther(amountETH)}
       await projectContract.invest(options);
 

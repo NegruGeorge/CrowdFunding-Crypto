@@ -4,10 +4,21 @@ import "./Project.sol";
 import "./ProjectNft.sol";
 import "./ProjectToken.sol";
 
-contract Crowdfunding {
+contract CrowdfundingSave {
     Project[] public projects;
 
     mapping(address => address) prod;
+    struct NftData {
+        string nftName;
+        string nftSymbol;
+        string baseUri;
+    }
+
+    struct TokenData {
+        string tokenName;
+        string tokenSymbol;
+        uint256 supply;
+    }
 
     function createProject(
         string memory title,
@@ -55,4 +66,5 @@ contract Crowdfunding {
         }
         return projectsForUser;
     }
+
 }
